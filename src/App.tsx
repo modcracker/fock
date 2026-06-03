@@ -657,7 +657,7 @@ export default function App() {
 
       {/* Universal Footer */}
       <footer className="border-t-8 border-[#141414] bg-[#DCDAD5] p-12 md:p-24 space-y-20">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 border-b-4 border-[#141414] pb-20">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-12 border-b-4 border-[#141414] pb-20">
           {SITEMAP.map(item => (
             <div key={item.group} className="space-y-6">
               <h4 className="text-xl font-bold underline decoration-4 underline-offset-8 mb-8">{item.group}</h4>
@@ -678,6 +678,35 @@ export default function App() {
               </ul>
             </div>
           ))}
+
+          {/* Peer Domain Network Backlinks column */}
+          <div className="space-y-6">
+            <h4 className="text-xl font-bold underline decoration-4 underline-offset-8 mb-8 text-[#ff00ff]">Peer Network</h4>
+            <ul className="space-y-4">
+              {[
+                "boobclub.com",
+                "kataf.com",
+                "jalh.com",
+                "subhauler.com",
+                "neaner.com",
+                "linkwhore.com",
+                "beamspread.com",
+                "medizer.com",
+                "omachines.com"
+              ].map(domain => (
+                <li key={domain}>
+                  <a 
+                    href={`https://${domain}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="block text-lg font-normal opacity-60 hover:opacity-100 cursor-pointer hover:translate-x-2 hover:text-[#ff00ff] transition-all"
+                  >
+                    {domain} ↗
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
         <div className="flex flex-col md:flex-row justify-between items-center gap-16 text-lg font-bold tracking-normal pt-8">
