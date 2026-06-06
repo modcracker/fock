@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { 
   Atom, 
   ExternalLink, 
@@ -188,6 +188,32 @@ const SITEMAP = [
   }
 ];
 
+function QuantumFockLogo() {
+  return (
+    <svg className="w-12 h-12 md:w-14 md:h-14 text-[#141414] group-hover:text-[#ff00ff] transition-all duration-500 scale-95 group-hover:scale-105 select-none" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Wave-particle duality concentric orbits */}
+      <circle cx="50" cy="50" r="42" stroke="currentColor" strokeWidth="1.2" strokeDasharray="4 6" className="opacity-20 animate-[spin-slow_40s_linear_infinite]" />
+      <circle cx="50" cy="50" r="30" stroke="currentColor" strokeWidth="1.5" className="opacity-30" />
+      <circle cx="50" cy="50" r="18" stroke="currentColor" strokeWidth="2" className="opacity-[0.15]" />
+      
+      {/* Quantized horizontal energy lines of Harmonic Potential */}
+      <line x1="28" y1="36" x2="72" y2="36" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="opacity-40" />
+      <line x1="18" y1="50" x2="82" y2="50" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="opacity-80" />
+      <line x1="28" y1="64" x2="72" y2="64" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="opacity-40" />
+      
+      {/* Quantized photon field excitations (interactive status dots) */}
+      <circle cx="38" cy="50" r="4.5" className="fill-cyan-400 stroke-[#141414] stroke-2 animate-pulse" />
+      <circle cx="62" cy="50" r="4.5" className="fill-[#ff00ff] stroke-[#141414] stroke-2 animate-pulse" style={{ animationDelay: '0.8s' }} />
+      <circle cx="50" cy="36" r="4" className="fill-yellow-400 stroke-[#141414] stroke-2 animate-pulse" style={{ animationDelay: '0.4s' }} />
+      <circle cx="50" cy="64" r="4" className="fill-emerald-400 stroke-[#141414] stroke-2 animate-pulse" style={{ animationDelay: '1.2s' }} />
+
+      {/* Bracket curves representing pure bra-ket notation: | n ⟩ */}
+      <path d="M 12 25 L 6 50 L 12 75" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M 88 25 L 94 50 L 88 75" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export default function App() {
   const [view, setView] = useState<'home' | 'archive' | 'page'>('home');
   const [selectedPageId, setSelectedPageId] = useState<string | null>(null);
@@ -218,6 +244,34 @@ export default function App() {
 
   const activePage = getPageData();
 
+  // Dynamic SEO metadata updates based on current router state
+  useEffect(() => {
+    let title = "FockState.com - Premium Quantum Computing Domain for Sale";
+    let desc = "Buy FockState.com: the definitive brand namespace for quantum mechanics, photon statistics, bosonic research, and state vector mapping. Secure transfer active.";
+
+    if (view === 'archive') {
+      if (activeDoc) {
+        const doc = ARCHIVE_DOCS.find(d => d.id === activeDoc);
+        if (doc) {
+          title = `${doc.title} | FockState Quantum Technical Archive`;
+          desc = `${doc.content.slice(0, 160)}... Detailed analysis of number operators, photon count bounds, and system parameters.`;
+        }
+      } else {
+        title = "FockState Quantum Technical Database & Core Research Nodes";
+        desc = "Explore high-fidelity mathematical models, state preparation registries, and physical parameters mapping infinite-dimensional Hilbert spaces.";
+      }
+    } else if (view === 'page' && activePage) {
+      title = `${activePage.name} - ${activePage.group} | FockState Reference`;
+      desc = `${activePage.content.slice(0, 160)}... Dynamic quantum node specification and matrix information for fockstate.com indices.`;
+    }
+
+    document.title = title;
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute("content", desc);
+    }
+  }, [view, activeDoc, selectedPageId, activePage]);
+
   return (
     <div className="min-h-screen flex flex-col font-sans text-[#141414] bg-[#E4E3E0] selection:bg-[#141414] selection:text-[#E4E3E0] relative overflow-hidden">
       {/* Dynamic Background Blobs */}
@@ -228,23 +282,16 @@ export default function App() {
       </div>
 
       {/* Universal Header */}
-      <header className="border-b-4 border-[#141414] p-8 flex justify-between items-center bg-[#E4E3E0]/80 backdrop-blur-md z-50 sticky top-0">
+      <header className="border-b-4 border-[#141414] p-6 md:p-8 flex justify-between items-center bg-[#E4E3E0]/80 backdrop-blur-md z-50 sticky top-0">
         <div 
-          className="flex items-center gap-6 cursor-pointer group"
+          className="flex items-center gap-4 cursor-pointer group"
           onClick={() => { setView('home'); setActiveDoc(null); setSelectedPageId(null); }}
+          aria-label="FockState Navigation Home"
         >
-          <div className="relative flex items-center justify-center font-mono font-bold text-3xl transition-all group-hover:scale-110">
-             <span className="text-[#141414] opacity-30">|</span>
-             <span className="px-1 text-[#ff00ff] group-hover:text-cyan-500 transition-colors">n</span>
-             <span className="text-[#141414] opacity-30">⟩</span>
-             {/* Small Particle Grid decor */}
-             <div className="absolute -top-1 -right-4 flex gap-0.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                <div className="w-1.5 h-1.5 rounded-full bg-[#ff00ff] animate-pulse" style={{ animationDelay: '0.5s' }} />
-             </div>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-mono font-bold leading-none">
-            FockState.com
+          <QuantumFockLogo />
+          <h1 className="text-3xl md:text-5xl font-mono font-bold leading-none select-none">
+            <span className="tracking-tight hover:text-cyan-600 transition-colors">FockState</span>
+            <span className="text-[#ff00ff] font-light">.com</span>
           </h1>
         </div>
         <button 
@@ -712,6 +759,16 @@ export default function App() {
         <div className="flex flex-col md:flex-row justify-between items-center gap-16 text-lg font-bold tracking-normal pt-8">
           <div className="space-y-2">
             <span className="hover:text-[#ff00ff] transition-colors cursor-default">© 2026 FockState.com</span>
+            <div className="text-xs font-mono tracking-wider opacity-60 hover:opacity-100 transition-opacity">
+              <a 
+                href="https://www.feelize.com/start" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="hover:text-[#ff00ff] transition-all underline decoration-1 text-xs"
+              >
+                WEBSITE BY FEELIZE
+              </a>
+            </div>
             <p className="text-xs opacity-30">Global Domain Index: 0x9928AF-FOCK-STATE-QUANTUM-NAMESPACE</p>
           </div>
           <div className="flex items-center gap-12 text-[#141414] opacity-20">
