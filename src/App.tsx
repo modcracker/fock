@@ -466,17 +466,78 @@ export default function App() {
     }
   };
 
+  // Client-Side Router: Sync initial URL on first mount and support back/forward buttons
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const path = window.location.pathname;
+
+    const handlePopState = (e: PopStateEvent) => {
+      if (e && e.state) {
+        if (e.state.view) setView(e.state.view);
+        if (e.state.selectedPageId !== undefined) setSelectedPageId(e.state.selectedPageId);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+
+    if (path === '/about') {
+      setView('about');
+      setSelectedPageId(null);
+    } else if (path === '/portfolio') {
+      setView('portfolio');
+      setSelectedPageId(null);
+    } else if (path === '/archive') {
+      setView('archive');
+      setSelectedPageId(null);
+    } else if (path === '/feelize') {
+      setView('feelize');
+      setSelectedPageId(null);
+    } else if (path === '/sitemap') {
+      setView('sitemap');
+      setSelectedPageId(null);
+    } else if (path.startsWith('/nodes/')) {
+      const nodeId = path.replace('/nodes/', '');
+      setView('page');
+      setSelectedPageId(nodeId);
+    } else {
+      setView('home');
+      setSelectedPageId(null);
+    }
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
+
+  // Client-Side Router: Update browser address bar when navigation state shifts
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    let targetPath = '/';
+    if (view === 'about') targetPath = '/about';
+    else if (view === 'portfolio') targetPath = '/portfolio';
+    else if (view === 'archive') targetPath = '/archive';
+    else if (view === 'feelize') targetPath = '/feelize';
+    else if (view === 'sitemap') targetPath = '/sitemap';
+    else if (view === 'page' && selectedPageId) targetPath = `/nodes/${selectedPageId}`;
+
+    if (window.location.pathname !== targetPath) {
+      window.history.pushState({ view, selectedPageId }, '', targetPath);
+    }
+  }, [view, selectedPageId]);
+
   const getXmlSitemapString = () => {
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://fockstate.com';
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
     xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
-    xml += `  <url>\n    <loc>https://fockstate.com/</loc>\n    <lastmod>2026-06-13</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>1.0</priority>\n  </url>\n`;
-    xml += `  <url>\n    <loc>https://fockstate.com/about</loc>\n    <lastmod>2026-06-13</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
-    xml += `  <url>\n    <loc>https://fockstate.com/portfolio</loc>\n    <lastmod>2026-06-13</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.9</priority>\n  </url>\n`;
-    xml += `  <url>\n    <loc>https://fockstate.com/archive</loc>\n    <lastmod>2026-06-13</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
+    xml += `  <url>\n    <loc>${origin}/</loc>\n    <lastmod>2026-06-15</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>1.0</priority>\n  </url>\n`;
+    xml += `  <url>\n    <loc>${origin}/about</loc>\n    <lastmod>2026-06-15</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
+    xml += `  <url>\n    <loc>${origin}/portfolio</loc>\n    <lastmod>2026-06-15</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.9</priority>\n  </url>\n`;
+    xml += `  <url>\n    <loc>${origin}/archive</loc>\n    <lastmod>2026-06-15</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
+    xml += `  <url>\n    <loc>${origin}/sitemap</loc>\n    <lastmod>2026-06-15</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
+    xml += `  <url>\n    <loc>${origin}/feelize</loc>\n    <lastmod>2026-06-15</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.5</priority>\n  </url>\n`;
     
     SITEMAP.forEach(group => {
       group.links.forEach(link => {
-        xml += `  <url>\n    <loc>https://fockstate.com/nodes/${link.id}</loc>\n    <lastmod>2026-06-13</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.6</priority>\n  </url>\n`;
+        xml += `  <url>\n    <loc>${origin}/nodes/${link.id}</loc>\n    <lastmod>2026-06-15</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.6</priority>\n  </url>\n`;
       });
     });
 
@@ -485,20 +546,23 @@ export default function App() {
   };
 
   const getJsonSitemapString = () => {
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://fockstate.com';
     const data = {
       "@context": "https://schema.org",
       "@type": "ItemList",
       "name": "FockState.com Sitemap Graph",
       "publisher": "FockState.com",
-      "generated": "2026-06-13T16:39:54-07:00",
+      "generated": "2026-06-15T19:40:00-07:00",
       "endpoints": [
-        { "url": "https://fockstate.com/", "name": "Principal Portal", "priority": 1.0, "changefreq": "daily" },
-        { "url": "https://fockstate.com/about", "name": "Sarah Fock - Systems Engineer Profile", "priority": 0.8, "changefreq": "weekly" },
-        { "url": "https://fockstate.com/portfolio", "name": "Premium Domains Portfolio", "priority": 0.9, "changefreq": "daily" },
-        { "url": "https://fockstate.com/archive", "name": "Quantum Research Archive Nodes", "priority": 0.7, "changefreq": "weekly" }
+        { "url": `${origin}/`, "name": "Principal Portal", "priority": 1.0, "changefreq": "daily" },
+        { "url": `${origin}/about`, "name": "Sarah Fock - Systems Engineer Profile", "priority": 0.8, "changefreq": "weekly" },
+        { "url": `${origin}/portfolio`, "name": "Premium Domains Portfolio", "priority": 0.9, "changefreq": "daily" },
+        { "url": `${origin}/archive`, "name": "Quantum Research Archive Nodes", "priority": 0.7, "changefreq": "weekly" },
+        { "url": `${origin}/sitemap`, "name": "Full Custom Sitemap Directory", "priority": 0.7, "changefreq": "weekly" },
+        { "url": `${origin}/feelize`, "name": "Websites Built by Feelize", "priority": 0.5, "changefreq": "monthly" }
       ],
       "dynamic_resource_nodes": SITEMAP.flatMap(g => g.links.map(l => ({
-        "url": `https://fockstate.com/nodes/${l.id}`,
+        "url": `${origin}/nodes/${l.id}`,
         "name": l.name,
         "group": g.group,
         "priority": 0.6
@@ -508,14 +572,17 @@ export default function App() {
   };
 
   const getTxtSitemapString = () => {
-    let txt = `https://fockstate.com/\n`;
-    txt += `https://fockstate.com/about\n`;
-    txt += `https://fockstate.com/portfolio\n`;
-    txt += `https://fockstate.com/archive\n`;
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://fockstate.com';
+    let txt = `${origin}/\n`;
+    txt += `${origin}/about\n`;
+    txt += `${origin}/portfolio\n`;
+    txt += `${origin}/archive\n`;
+    txt += `${origin}/sitemap\n`;
+    txt += `${origin}/feelize\n`;
     
     SITEMAP.forEach(group => {
       group.links.forEach(link => {
-        txt += `https://fockstate.com/nodes/${link.id}\n`;
+        txt += `${origin}/nodes/${link.id}\n`;
       });
     });
     return txt.trim();
