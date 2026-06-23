@@ -21,6 +21,7 @@ import {
   List
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Analytics } from '@vercel/analytics/react';
 import { REAL_ESTATE_DOMAINS, RealEstateDomain } from './domainsData';
 
 const FOCK_STATE_KEYWORDS = [
@@ -2554,6 +2555,7 @@ export default function App() {
           <p>This domain fockstate.com is a premium asset for quantum mechanics, photon statistics, and hilbert space analysis. Buy fockstate.com today.</p>
         </div>
       </footer>
+      <Analytics />
     </div>
   );
 }
